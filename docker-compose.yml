@@ -1,0 +1,58 @@
+version: '3'
+services:
+  rocketchat:
+    image: rocketchat/rocket.chat:latest
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+      - PORT=3000
+      - ROOT_URL=http://localhost:3000
+      - MONGO_URL=mongodb://mongo:27017/rocketchat
+      - TZ=Asia/Tokyo
+    links:
+      - mongo:mongo
+    ports:
+      - 3000:3000
+    networks:
+      - front-tier
+      - back-tier
+  
+  mongo:
+    image: mongo:3.2
+    volumes:
+      - ./data/db:/data/db
+    environment:
+      - TZ=Asia/Tokyo
+    command: mongod --smallfiles --oplogSize 128
+    networks:
+      - back-tier
+  
+  hubot:
+    image: rocketchat/hubot-rocketchat:latest
+    environment:
+      #- ROCKETCHAT_URL=https://brainpad.rocket.chat
+      #- ROCKETCHAT_ROOM=program-clinic
+      #- ROCKETCHAT_USER=program-clinic-bot
+      #- ROCKETCHAT_PASSWORD=bot-password
+      #- BOT_NAME=program-clinic-bot
+      - ROCKETCHAT_URL=rocketchat:3000
+      - ROCKETCHAT_ROOM=general
+      - ROCKETCHAT_USER=bot
+      - ROCKETCHAT_PASSWORD=bot-password
+      - BOT_NAME=bitbucket-bot
+      - BOT_AVATAR=https://www.logolynx.com/images/logolynx/0d/0d28dd1a0f0746030842168d7fbc39a5.jpeg
+      - EXTERNAL_SCRIPTS=hubot-seen,hubot-links,hubot-diagnostics
+      - TZ=Asia/Tokyo
+    networks:
+      - front-tier
+    labels:
+      - "traefik.enable=false"
+    volumes:
+      - ./scripts:/home/hubot/scripts
+    ports:
+      - 3001:8080
+
+networks:
+  front-tier:
+  back-tier:
+
