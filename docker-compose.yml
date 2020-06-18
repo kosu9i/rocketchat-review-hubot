@@ -30,11 +30,6 @@ services:
   hubot:
     image: rocketchat/hubot-rocketchat:latest
     environment:
-      #- ROCKETCHAT_URL=https://brainpad.rocket.chat
-      #- ROCKETCHAT_ROOM=program-clinic
-      #- ROCKETCHAT_USER=program-clinic-bot
-      #- ROCKETCHAT_PASSWORD=bot-password
-      #- BOT_NAME=program-clinic-bot
       - ROCKETCHAT_URL=rocketchat:3000
       - ROCKETCHAT_ROOM=general
       - ROCKETCHAT_USER=bot
